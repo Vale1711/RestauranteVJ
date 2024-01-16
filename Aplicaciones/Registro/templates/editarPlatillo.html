@@ -1,0 +1,102 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+
+<div style="padding: 60px 30px 200px 30px;">
+  <div class="row">
+    <div class="col-md-2">
+
+    </div>
+    <div class="col-md-8">
+      <form class="" action="/procesarinformacionPlatillo/" method="post" enctype="multipart/form-data" id="frm_nuevo_cliente">
+        {% csrf_token %}
+        <b>Tipo:</b><br>
+        <select class="form-control" name="id_tipo" id="id_tipo" required>
+          <option value="">---SELECCIONE EL TIPO---</option >
+          {%  for tipo in tipos %}
+          <option value="{{tipo.id_ti_vj}}">{{tipo.nombre_vj}}</option>
+          {% endfor %}
+        </select><br>
+        <script type="text/javascript">
+         document.getElementById("id_tipo").value="{{platillo.tipo_vj.id_ti_vj}}";
+
+       </script>
+
+        <input type="hidden" name="id_pla_vj" value="{{platillo.id_pla_vj}}">
+        <b>Nombre del platillo:</b><br>
+       <input type="text" name="nombre_vj" value="{{platillo.nombre_vj}}" id="nombre_vj" placeholder="Ingrese la fecha del pedido" class="form-control" required><br>
+       <b>Calorias del platillo:</b><br>
+       <input type="text" name="calorias_vj" value="{{platillo.calorias_vj}}" id="calorias_vj" placeholder="Ingrese las calorias del platillo" class="form-control" required><br>
+       <b>Descripción:</b>
+       <input type="text" name="descripcion_vj" value="{{platillo.descripcion_vj}}" id="descripcion_vj" placeholder="Ingrese la descripción" class="form-control" required><br>
+       <b>Fotografia del Platillo</b>
+              <div class="custom-file">
+                  <input type="file" name="imagen_pla_vj" accept="image/*" id="imagen_pla_vj" class="custom-file-input" onchange="updateFileName(this)">
+              </div>
+              {% if platillo.imagen_pla_vj %}
+                  <img src="{{ platillo.imagen_pla_vj.url }}" alt="{{ platillo.imagen_pla_vj.name }}" height="60px">
+              {% endif %}
+         <br><center>
+           <button type="submit" name="button" class="btn btn-primary">&nbsp;&nbsp;<i class="fa-solid fa-pen"></i>&nbsp;Actualizar&nbsp;&nbsp;&nbsp;</button>
+           <button type="reset" name="button" class="btn btn-warning" ><a href="/platillo" style="color:black; text-decoration: none;">&nbsp;&nbsp;<i class="fa-solid fa-xmark"></i>&nbsp;Cancelar&nbsp;&nbsp;&nbsp;</a></button>
+
+         </center>
+
+
+
+
+      </form>
+      <script>
+      function updateFileName(input) {
+      var fileName = input.files.length > 0 ? input.files[0].name : 'Seleccionar archivo';
+      var label = input.nextElementSibling;
+      label.innerHTML = fileName;
+    }
+    </script>
+
+
+
+    </div>
+
+  </div>
+</div>
+<script type="text/javascript">
+  $("#frm_nuevo_cliente").validate({
+    rules:{
+      "id_tipo":{
+        required:true
+      },
+      "nombre_vj":{
+        required:true
+      },
+      "calorias_vj":{
+        required:true
+      },
+      "descripcion_vj":{
+        required:true
+      }
+
+    },
+    messages:{
+      "id_tipo":{
+        required:"Escoja el tipo"
+      },
+      "nombre_vj":{
+        required:"Ingrese el nombre del platillo"
+      },
+      "calorias_vj":{
+        required:"Ingrese las calorías"
+      },
+      "descripcion_vj":{
+        required:"Ingrese la descripción"
+      }
+
+    }
+  });
+</script>
+
+
+
+
+    {% endblock %}

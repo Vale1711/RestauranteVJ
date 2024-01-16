@@ -1,0 +1,10 @@
+table {
+  border: 2px solid #C6DCE4 !important;
+}
+label.error{
+  color:red;
+  font-weight: bold;
+}
+input.error, select.error, textarea.error {
+  border: 1px solid red;
+}

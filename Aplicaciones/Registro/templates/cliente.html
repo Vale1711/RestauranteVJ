@@ -1,0 +1,173 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+<div style="padding: 40px 30px 60px 30px;">
+  <div class="text-center">
+    <h1>
+
+    <b>
+
+      <i class="fa-solid fa-person"></i>
+      Cliente
+    </b>
+    </h1>
+    <br>
+  </div>
+
+
+    <br>
+    <div class="row">
+       <div class="col-md-5">
+         <form class="" action="/guardarCliente/" method="post" enctype="multipart/form-data" id="frm_nuevo_cliente">
+           {% csrf_token %}
+           <b>Provincia:</b><br>
+           <select class="form-control" name="id_provi" id="id_provi" required>
+             <option value="">---SELECCIONE LA PROVINCIA---</option >
+             {%  for provincia in provincias %}
+             <option value="{{provincia.id_pro_vj}}">{{provincia.nombre_vj}}</option>
+             {% endfor %}
+           </select><br>
+
+            <b>Cédula:</b><br>
+           <input type="text" name="cedula_vj" value="" id="cedula_vj" placeholder="Ingrese la cédula del cliente" class="form-control" required><br>
+           <b>Apellido:</b><br>
+           <input type="text" name="apellido_vj" value="" id="apellido_vj" placeholder="Ingrese el apellido del cliente" class="form-control" required><br>
+           <b>Nombre:</b>
+           <input type="text" name="nombre_vj" value="" id="nombre_vj" placeholder="Ingrese el nombre del cliente" class="form-control" required><br>
+           <b>Dirección:</b>
+            <input type="text" name="direccion_vj" value="" id="direccion_vj" placeholder="Ingrese la dirección" class="form-control" required><br>
+            <center>
+              <button type="submit" name="button" class="btn btn-primary">&nbsp;&nbsp;<i class="fa-solid fa-floppy-disk"></i>&nbsp;Guardar&nbsp;&nbsp;&nbsp;</button>
+              <button type="reset" name="button" class="btn btn-warning">&nbsp;&nbsp;<i class="fa-solid fa-xmark"></i>&nbsp;Cancelar&nbsp;&nbsp;&nbsp;</button>
+
+            </center>
+
+
+         </form>
+
+       </div>
+       <div class="col-md-7 text-center">
+         <img src="{% static 'img/logo4.png' %}" alt="" width="25%"><br><br>
+         <table class="table table-striped" id="tbl_clientes">
+           <thead>
+             <tr>
+               <th>ID</th>
+               <th>Cédula</th>
+               <th>Apellido</th>
+               <th>Nombre</th>
+               <th>Dirección</th>
+               <th>Provincia</th>
+               <th>Acciones</th>
+             </tr>
+
+           </thead>
+           <tbody>
+             {% for cliente in clientes %}
+                <tr>
+                  <td>{{cliente.id_cli_vj}}</td>
+                  <td>{{cliente.cedula_vj}}</td>
+                  <td>{{cliente.apellido_vj}}</td>
+                  <td>{{cliente.nombre_vj}}</td>
+                  <td>{{cliente.direccion_vj}}</td>
+                  <td>{{cliente.provincia_vj.nombre_vj}}</td>
+                  <td>
+                        <a href="/editarCliente/{{cliente.id_cli_vj}}" class="btn btn-warning">&nbsp;<i class="fa-solid fa-pen-to-square"></i>&nbsp;Editar&nbsp;</a>
+                        <a href="javascript: void(0)" onclick="eliminarCliente('/eliminarCliente/{{cliente.id_cli_vj}}');" class="btn btn-danger">&nbsp;<i class="fa-solid fa-trash"></i>&nbsp;Eliminar&nbsp;</a>
+                  </td>
+                </tr>
+                {% endfor %}
+           </tbody>
+
+         </table>
+       </div>
+    </div>
+</div>
+<script type="text/javascript">
+      function eliminarCliente(url){
+        iziToast.question({
+            timeout: 15000,
+            close: true,
+            overlay: true,
+            displayMode: 'once',
+            id: 'question',
+            zindex: 999,
+            title: 'CONFIRMACIÓN',
+            message: '¿Está seguro de eliminar el cliente seleccionado?',
+            position: 'center',
+            buttons: [
+                ['<button><b>SI</b></button>', function (instance, toast) {
+                    instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                    window.location.href=url;
+                }, true],
+                ['<button>NO</button>', function (instance, toast) {
+
+                    instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+
+                }],
+            ]
+        });
+      }
+    </script>
+    <script type="text/javascript">
+      $("#frm_nuevo_cliente").validate({
+        rules:{
+          "id_provi":{
+            required:true
+          },
+          "cedula_vj":{
+            required:true
+          },
+          "apellido_vj":{
+            required:true
+          },
+          "nombre_vj":{
+            required:true
+          },
+          "direccion_vj":{
+            required:true
+          }
+        },
+        messages:{
+          "id_provi":{
+            required:"Escoja la Provincia"
+          },
+          "cedula_vj":{
+            required:"Ingrese la cedula",
+            minlength:"La cedula debe tener como minimo 10 numeros",
+            maxlength:"La cedula solo debe tener 10 caracteres"
+          },
+          "apellido_vj":{
+            required:"Ingrese el apellido"
+          },
+          "nombre_vj":{
+            required:"Ingrese el nombre"
+          },
+          "direccion_vj":{
+            required:"Ingrese la direccion"
+          }
+        }
+      });
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('#tbl_clientes').DataTable({
+              dom: 'Bfrtip',
+              buttons: [
+                  {
+                      extend: 'pdfHtml5',
+                      messageTop: 'Reportes de clientes en DJango.'
+                  },
+                  'print',
+                  'csv'
+              ],
+              language: {
+                  url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" // Configura el idioma a español
+              }
+          });
+      });
+  </script>
+
+
+
+  {% endblock %}

@@ -1,0 +1,192 @@
+{% extends "./plantilla.html" %}
+{% block contenido %}
+{% load static %}
+
+<div style="padding: 40px 30px 60px 30px;">
+  <div class="text-center">
+    <h1>
+
+    <b>
+
+      <i class="fa-solid fa-note-sticky"></i>
+      Detalle
+    </b>
+    </h1>
+    <br>
+  </div>
+
+
+    <br>
+    <div class="row">
+       <div class="col-md-5">
+         <form class="" action="/guardarDetalle/" method="post" enctype="multipart/form-data" id="frm_nuevo_cliente">
+           {% csrf_token %}
+           <b>Pedido:</b><br>
+           <select class="form-control" name="id_pedido" id="id_pedido" required>
+             <option value="">---SELECCIONE EL PEDIDO---</option >
+             {%  for pedido in pedidos %}
+             <option value="{{pedido.id_pe_vj}}">{{pedido.estadope_vj}}</option>
+             {% endfor %}
+           </select><br>
+           <b>Platillo:</b><br>
+           <select class="form-control" name="id_platillo" id="id_platillo" required>
+             <option value="">---SELECCIONE EL PLATILLO---</option >
+             {%  for platillo in platillos %}
+             <option value="{{platillo.id_pla_vj}}">{{platillo.nombre_vj}}</option>
+             {% endfor %}
+           </select><br>
+
+            <b>Cantidad:</b><br>
+           <input type="text" name="cantidad_vj" value="" id="cantidad_vj" placeholder="Ingrese la Cantidad" class="form-control" required><br>
+           <b>Precio Unitario:</b><br>
+           <input type="text" name="preciounitario_vj" value="" id="preciounitario_vj" placeholder="Ingrese el precio unitario" class="form-control" required><br>
+           <b>Descuento:</b>
+           <input type="text" name="descuento_vj" value="" id="descuento_vj" placeholder="Ingrese el descuento" class="form-control" required><br>
+           <b>Total:</b>
+            <input type="text" name="total_vj" value="" id="total_vj" placeholder="Ingrese el total" class="form-control" required><br>
+            <center>
+              <button type="submit" name="button" class="btn btn-primary">&nbsp;&nbsp;<i class="fa-solid fa-floppy-disk"></i>&nbsp;Guardar&nbsp;&nbsp;&nbsp;</button>
+              <button type="reset" name="button" class="btn btn-warning">&nbsp;&nbsp;<i class="fa-solid fa-xmark"></i>&nbsp;Cancelar&nbsp;&nbsp;&nbsp;</button>
+
+            </center>
+
+
+         </form>
+
+       </div>
+       <div class="col-md-7 text-center">
+         <img src="{% static 'img/logo4.png' %}" alt="" width="25%"><br><br>
+         <table class="table table-striped" id="tbl_clientes">
+           <thead>
+             <tr>
+               <th>ID</th>
+               <th>Cantidad</th>
+               <th>Precio Unitario</th>
+               <th>Descuento</th>
+               <th>Total</th>
+               <th>Pedido</th>
+               <th>Platillo</th>
+               <th>Acciones</th>
+             </tr>
+
+           </thead>
+           <tbody>
+             {% for detalle in detalles %}
+                <tr>
+                  <td>{{detalle.id_de_vj}}</td>
+                  <td>{{detalle.cantidad_vj}}</td>
+                  <td>{{detalle.preciounitario_vj}}</td>
+                  <td>{{detalle.descuento_vj}}</td>
+                  <td>{{detalle.total_vj}}</td>
+                  <td>{{detalle.pedido_vj.estadope_vj}}</td>
+                  <td>{{detalle.platillo_vj.nombre_vj}}</td>
+                  <td>
+                        <a href="/editarDetalle/{{detalle.id_de_vj}}" class="btn btn-warning">&nbsp;<i class="fa-solid fa-pen-to-square"></i>&nbsp;Editar&nbsp;</a>
+                        <a href="javascript: void(0)" onclick="eliminarDetalle('/eliminarDetalle/{{detalle.id_de_vj}}');" class="btn btn-danger">&nbsp;<i class="fa-solid fa-trash"></i>&nbsp;Eliminar&nbsp;</a>
+                  </td>
+                </tr>
+                {% endfor %}
+           </tbody>
+
+         </table>
+       </div>
+    </div>
+</div>
+<script type="text/javascript">
+      function eliminarDetalle(url){
+        iziToast.question({
+            timeout: 15000,
+            close: true,
+            overlay: true,
+            displayMode: 'once',
+            id: 'question',
+            zindex: 999,
+            title: 'CONFIRMACIÓN',
+            message: '¿Está seguro de eliminar el cliente seleccionado?',
+            position: 'center',
+            buttons: [
+                ['<button><b>SI</b></button>', function (instance, toast) {
+                    instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+                    window.location.href=url;
+                }, true],
+                ['<button>NO</button>', function (instance, toast) {
+
+                    instance.hide({ transitionOut: 'fadeOut' }, toast, 'button');
+
+                }],
+            ]
+        });
+      }
+    </script>
+    <script type="text/javascript">
+      $("#frm_nuevo_cliente").validate({
+        rules:{
+          "id_pedido":{
+            required:true
+          },
+          "id_platillo":{
+            required:true
+          },
+          "cantidad_vj":{
+            required:true,
+            number: true
+          },
+          "preciounitario_vj":{
+            required:true,
+            number: true
+          },
+          "descuento_vj":{
+            required:true
+          },
+          "total_vj":{
+            required:true,
+            number: true
+          }
+        },
+        messages:{
+          "id_pedido":{
+            required:"Escoja el Pedido"
+          },
+          "id_platillo":{
+            required:"Escoja el platillo"
+          },
+          "cantidad_vj":{
+            required:"Ingrese la cantidad",
+            number: "Ingrese un valor numérico válido"
+
+          },
+          "preciounitario_vj":{
+            required:"Ingrese el precio unitario",
+            number: "Ingrese un valor numérico válido"
+          },
+          "descuento_vj":{
+            required:"Ingrese el descuento"
+          },
+          "total_vj":{
+            required:"Ingrese el total",
+            number: "Ingrese un valor numérico válido"
+          }
+        }
+      });
+    </script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+          $('#tbl_clientes').DataTable({
+              dom: 'Bfrtip',
+              buttons: [
+                  {
+                      extend: 'pdfHtml5',
+                      messageTop: 'Reportes de clientes en DJango.'
+                  },
+                  'print',
+                  'csv'
+              ],
+              language: {
+                  url: "https://cdn.datatables.net/plug-ins/1.10.24/i18n/Spanish.json" // Configura el idioma a español
+              }
+          });
+      });
+  </script>
+
+
+  {% endblock %}
